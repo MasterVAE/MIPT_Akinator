@@ -14,42 +14,51 @@ AkinatorState RunAkinator(Tree* tree)
         if(current_node->left == NULL && current_node->right == NULL)
         {
             printf("Is it %s? [y/n]\n", current_node->string);
-            char answer;
-            scanf("%c", &answer);
+            char answer[2];
+            scanf("%1s", answer);
+            getchar();
 
-            if(answer == 'y')
+            if(!strcmp(answer, "y"))
             {
                 printf("Yay! I guessed it right!\n");
+                return AKINATOR_CORRECT;
             }
             else
             {
                 printf("I give up! What was your object?\n");
                 char new_object[INPUT_BUFFER_SIZE];
-                scanf("%s", new_object);
+                scanf("%[^\n]", new_object);
+                getchar();
 
-                printf("Please provide a question that distinguishes %s from %s.\n", new_object, current_node->string);
+                printf("Please provide a question that distinguishes %s from %s.\n", 
+                       new_object, current_node->string);
                 char new_question[INPUT_BUFFER_SIZE];
-                scanf("%s", new_question);
+                scanf("%[^\n]", new_question);
+                getchar();
 
-                TreeAdd(current_node, strdup(current_node->string), TREE_ADD_LEFT);
-                TreeAdd(current_node, strdup(new_object), TREE_ADD_RIGHT);
-
+                char* old_object = strdup(current_node->string);
+                
+                free(current_node->string);
                 current_node->string = strdup(new_question);
-
+                
+                TreeAdd(current_node, strdup(new_object), TREE_ADD_RIGHT);   
+                TreeAdd(current_node, strdup(old_object), TREE_ADD_LEFT);
+                
+                free(old_object);
                 printf("Thanks! I've learned something new today.\n");
+                break;
             }
-            break;
         }
         else
         {
             printf("%s [y/n]\n", current_node->string);
-            char answer;
-            scanf("%c", &answer);
+            char answer[2];
+            scanf("%1s", answer);
+            getchar();
 
-            current_node = answer == 'y' ? current_node->right : current_node->left;
+            current_node = !strcmp(answer, "y") ? current_node->right : current_node->left;
         }
     }
 
     return AKINATOR_CORRECT;
 }
-

@@ -11,4 +11,16 @@ static const size_t INPUT_BUFFER_SIZE = 200;
 
 AkinatorState RunAkinator(Tree* tree);
 
+#define DO(state)                                       \
+{                                                       \
+    AkinatorState state_var = state;                    \
+    if(state_var != AKINATOR_CORRECT)                   \
+    {                                                   \
+        printf("Error occurred: %d\n", state_var);      \
+        TreeDotDump(tree, DOT_FILENAME);                \
+        TreeDestroy(tree);                              \
+        return state_var;                               \
+    }                                                   \
+}
+
 #endif // AKINATOR_MANAGER_H_

@@ -7,13 +7,15 @@
 int main()
 {
     Tree* tree = TreeConstruct();
-    LoadTree(tree, TREE_FILENAME);
+    DO(LoadTree(tree, TREE_FILENAME));
 
-    RunAkinator(tree);
+    DO(RunAkinator(tree));
 
-    //PrintNode(tree->root);
+    PrintNode(tree->root);
     TreeDotDump(tree, DOT_FILENAME);
 
-    SaveTree(tree, TREE_FILENAME);
+    DO(SaveTree(tree, TREE_FILENAME));
     TreeDestroy(tree);
+
+    return 0;
 }

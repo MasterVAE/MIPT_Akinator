@@ -27,12 +27,12 @@ void DotPrintNode(TreeNode* node, FILE* file, int rank)
     fprintf(file, "\tstyle=filled;                                         \n");
     fprintf(file, "\trank=%d;                                              \n", rank);
     fprintf(file, "\tfillcolor=lavender;                                   \n");
-    fprintf(file, "\t\"%p_address\"[label=\"%p\",fillcolor=\"coral\"];     \n", node, node);
-    fprintf(file, "\t\"%p_value\"[label=\"%s\",fillcolor=\"salmon\"];      \n", node, node->string);
+    fprintf(file, "\t\"%p_address\"[label=\"%p\",fillcolor=\"lavender\"];     \n", node, node);
+    fprintf(file, "\t\"%p_value\"[label=\"%s\",fillcolor=\"lightblue\"];   \n", node, node->string);
     fprintf(file, "\tsubgraph \"%p_bottom\"                                \n", node);
     fprintf(file, "\t{                                                     \n");
     fprintf(file, "\t\t style=invis;                                       \n");
-    fprintf(file, "\t\t\"%p_left\"[label=\"%p\",fillcolor=\"lightblue\"];  \n",node,  node->left);
+    fprintf(file, "\t\t\"%p_left\"[label=\"%p\",fillcolor=\"coral\"];      \n",node,  node->left);
     fprintf(file, "\t\t\"%p_right\"[label=\"%p\",fillcolor=\"lightgreen\"];\n", node, node->right);
     fprintf(file, "\t}                                                     \n");
     fprintf(file, "\t\"%p_address\"->\"%p_value\"[style=invis,weight=10];  \n", node, node);

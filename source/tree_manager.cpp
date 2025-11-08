@@ -113,6 +113,7 @@ static char* LoadNode(TreeNode* node, char* buffer)
     while((c = buffer[len++]) != '\"');
 
     node->string = (char*)calloc(len, sizeof(char));
+    
     strncpy(node->string, buffer, len-1);
 
     buffer += len;
