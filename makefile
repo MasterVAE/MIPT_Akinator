@@ -22,7 +22,7 @@ CFLAGS = -D _DEBUG -ggdb3 -std=c++17 -Wall -Wextra -Weffc++ -Waggressive-loop-op
 		 -pie -fPIE -Werror=vla\
 		 -fsanitize=address,alignment,bool,bounds,enum,float-cast-overflow,float-divide-by-zero,integer-divide-by-zero,leak,nonnull-attribute,null,object-size,return,returns-nonnull-attribute,shift,signed-integer-overflow,undefined,unreachable,vla-bound,vptr
 
-SOURCES = akinator.cpp tree_manager.cpp tree_logger.cpp
+SOURCES = akinator.cpp tree_manager.cpp tree_logger.cpp akinator_manager.cpp
 OBJECTS := $(addprefix $(OBJ_DIR)/, $(SOURCES:.cpp=.o))
 TARGET = $(TARGET_DIR)/akinator.out
 

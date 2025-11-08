@@ -1,22 +1,19 @@
-#include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
 
 #include "../include/tree_manager.h"
 #include "../include/tree_logger.h"
+#include "../include/akinator_manager.h"
 
 int main()
 {
     Tree* tree = TreeConstruct();
-    tree->dotfile = fopen(DOT_FILENAME, "w+");
+    LoadTree(tree, TREE_FILENAME);
 
-    srand((unsigned)time(NULL));
-    for(size_t i = 0; i < 10; i++)
-    {
-        TreeAdd(tree, rand() % 100);
-    }
+    RunAkinator(tree);
 
-    PrintNode(tree->root);
-    TreeDotDump(tree);
+    //PrintNode(tree->root);
+    TreeDotDump(tree, DOT_FILENAME);
+
+    SaveTree(tree, TREE_FILENAME);
     TreeDestroy(tree);
 }

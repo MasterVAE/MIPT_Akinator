@@ -6,10 +6,6 @@
 void PrintNode(TreeNode* node);
 void DotPrintNode(TreeNode* node, FILE* file, int rank);
 
-void TreeDotDump(Tree* tree);
-void TreeDotDumpStart(Tree* tree);
-void TreeDotDumpEnd(Tree* tree);
-
-static const char* DOT_FILENAME = "files/tree.dot";
+void TreeDotDump(Tree* tree, const char* filename);
 
 #endif // TREE_LOGGER_H_

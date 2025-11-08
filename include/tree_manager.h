@@ -3,13 +3,11 @@
 
 #include <stdio.h>
 
-typedef int TreeType;
-
 struct TreeNode;
 
 struct TreeNode
 {
-    TreeType value;
+    char* string;
 
     TreeNode* left;
     TreeNode* right;
@@ -17,14 +15,27 @@ struct TreeNode
 
 struct Tree 
 {
-    FILE* dotfile;
-
     TreeNode* root;
 };
 
+enum TreeAddDir
+{
+    TREE_ADD_LEFT,
+    TREE_ADD_RIGHT
+};
+
+enum AkinatorState
+{
+    AKINATOR_CORRECT,
+    AKINATOR_FILE_ERROR,
+    AKINATOR_BUFFER_ERROR
+};
+
 Tree* TreeConstruct();
-void TreeNodeDestroy(TreeNode* node);
-void TreeAdd(Tree* tree, TreeType value);
+void TreeAdd(TreeNode* node, char* string, TreeAddDir direction);
 void TreeDestroy(Tree* tree);
+AkinatorState SaveTree(Tree* tree, const char* filename);
+AkinatorState LoadTree(Tree* tree, const char* filename);
+char* LoadToBuffer(const char* filename);
 
 #endif // TREE_MANAGER_H_
