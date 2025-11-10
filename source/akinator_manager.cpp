@@ -14,11 +14,11 @@ AkinatorState RunAkinator(Tree* tree)
         if(current_node->left == NULL && current_node->right == NULL)
         {
             printf("Is it %s? [y/n]\n", current_node->string);
-            char answer[2];
-            scanf("%1s", answer);
+
+            int answer = getchar();
             getchar();
 
-            if(!strcmp(answer, "y"))
+            if(answer == 'y')
             {
                 printf("Yay! I guessed it right!\n");
                 return AKINATOR_CORRECT;
@@ -26,14 +26,14 @@ AkinatorState RunAkinator(Tree* tree)
             else
             {
                 printf("I give up! What was your object?\n");
-                char new_object[INPUT_BUFFER_SIZE];
-                scanf("%[^\n]", new_object);
+                char new_object[INPUT_BUFFER_SIZE + 1];
+                scanf("%" XSTR(INPUT_BUFFER_SIZE) "s", new_object);
                 getchar();
 
                 printf("Please provide a question that distinguishes %s from %s.\n", 
                        new_object, current_node->string);
-                char new_question[INPUT_BUFFER_SIZE];
-                scanf("%[^\n]", new_question);
+                char new_question[INPUT_BUFFER_SIZE + 1];
+                scanf("%" XSTR(INPUT_BUFFER_SIZE) "s", new_question);
                 getchar();
 
                 char* old_object = strdup(current_node->string);
@@ -52,11 +52,11 @@ AkinatorState RunAkinator(Tree* tree)
         else
         {
             printf("%s [y/n]\n", current_node->string);
-            char answer[2];
-            scanf("%1s", answer);
+
+            int answer = getchar();
             getchar();
 
-            current_node = !strcmp(answer, "y") ? current_node->right : current_node->left;
+            current_node = answer == 'y' ? current_node->right : current_node->left;
         }
     }
 

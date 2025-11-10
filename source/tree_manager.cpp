@@ -9,10 +9,14 @@ static void SaveNode(TreeNode* node, FILE* file);
 static TreeNode* NodeConstruct();
 static void TreeNodeDestroy(TreeNode* node);
 static char* LoadNode(TreeNode* node, char* buffer);
+static size_t FileLength(FILE* file);
+static char* CreateNewBase();
 
 Tree* TreeConstruct()
 {
     Tree* tree = (Tree*)calloc(1, sizeof(Tree));
+    if(!tree) return NULL;
+
     tree->root = NodeConstruct();
     return tree;
 }
@@ -20,6 +24,8 @@ Tree* TreeConstruct()
 static TreeNode* NodeConstruct()
 {
     TreeNode* node = (TreeNode*)calloc(1, sizeof(TreeNode));
+    if(!node) return NULL;
+
     node->string = NULL;
     node->left = NULL;
     node->right = NULL;
@@ -29,7 +35,7 @@ static TreeNode* NodeConstruct()
 
 static void TreeNodeDestroy(TreeNode* node)
 {
-    if (node == NULL)   return;
+    if(!node) return;
 
     TreeNodeDestroy(node->left);
     TreeNodeDestroy(node->right);
@@ -40,30 +46,34 @@ static void TreeNodeDestroy(TreeNode* node)
 
 void TreeAdd(TreeNode* node, char* string, TreeAddDir direction)
 {
+    if(!node) return;
+    if(!string) return;
+
     TreeNode* new_node = NodeConstruct();
     new_node->string = string;
 
     if(direction == TREE_ADD_LEFT)
     {
-        if(node->left == NULL)
+        if(node->left)
         {
-            node->left = new_node;
+            TreeNodeDestroy(node->left);
         }
+        node->left = new_node;
+        return;
     }
-    else if(direction == TREE_ADD_RIGHT)
+
+    if(node->right)
     {
-        if(node->right == NULL)
-        {
-            node->right = new_node;
-        }
+        TreeNodeDestroy(node->right);   
     }
+    node->right = new_node;
 }
 
 void TreeDestroy(Tree* tree)
 {
     if(!tree) return;
 
-    if (tree->root)
+    if(tree->root)
     {
         TreeNodeDestroy(tree->root);
     }
@@ -72,7 +82,10 @@ void TreeDestroy(Tree* tree)
 }
 
 AkinatorState SaveTree(Tree* tree, const char* filename)
-{
+{   
+    if(!tree) return AKINATOR_BUFFER_ERROR;
+    if(!filename) return AKINATOR_FILE_ERROR;
+
     FILE* file = fopen(filename, "w+");
     if(!file) return AKINATOR_FILE_ERROR;
 
@@ -84,7 +97,7 @@ AkinatorState SaveTree(Tree* tree, const char* filename)
 
 static void SaveNode(TreeNode* node, FILE* file)
 {
-    if(node == NULL)   return;
+    if(!node || !file) return;
 
     fprintf(file, "(\"%s\"", node->string);
     
@@ -96,6 +109,9 @@ static void SaveNode(TreeNode* node, FILE* file)
 
 AkinatorState LoadTree(Tree* tree, const char* filename)
 {
+    if(!tree) return AKINATOR_BUFFER_ERROR;
+    if(!filename) return AKINATOR_FILE_ERROR;
+
     char* buffer = LoadToBuffer(filename);
     if(!buffer) return AKINATOR_BUFFER_ERROR;
 
@@ -107,10 +123,12 @@ AkinatorState LoadTree(Tree* tree, const char* filename)
 
 static char* LoadNode(TreeNode* node, char* buffer)
 {
+    if(!node || !buffer) return NULL;
+
     buffer += 2;
     size_t len = 0;
     char c;
-    while((c = buffer[len++]) != '\"');
+    while((c = buffer[len++]) != '\"' && c != '\0');
 
     node->string = (char*)calloc(len, sizeof(char));
     
@@ -132,17 +150,12 @@ static char* LoadNode(TreeNode* node, char* buffer)
 
 char* LoadToBuffer(const char* filename)
 {
-    FILE* file = fopen(filename, "r");
-    if(!file)
-    {
-        char* buffer = (char*)calloc(strlen(DEFAULT_LOAD_VALUE) + 1, sizeof(char));
-        strcpy(buffer, DEFAULT_LOAD_VALUE);
-        return buffer;
-    }
+    if(!filename) return CreateNewBase();
 
-    fseek(file, 0, SEEK_END);
-    size_t filesize = (size_t)ftell(file);
-    fseek(file, 0, SEEK_SET);
+    FILE* file = fopen(filename, "r");
+    if(!file) return CreateNewBase();
+
+    size_t filesize = FileLength(file);
 
     char* buffer = (char*)calloc(filesize + 1, sizeof(char));
     if(!buffer)
@@ -155,5 +168,23 @@ char* LoadToBuffer(const char* filename)
     buffer[filesize] = '\0';
 
     fclose(file);
+    return buffer;
+}
+
+static size_t FileLength(FILE* file)
+{
+    if(!file) return 0;
+
+    fseek(file, 0, SEEK_END);
+    size_t filesize = (size_t)ftell(file);
+    fseek(file, 0, SEEK_SET);
+
+    return filesize;
+}
+
+static char* CreateNewBase()
+{
+    char* buffer = (char*)calloc(strlen(DEFAULT_LOAD_VALUE) + 1, sizeof(char));
+    strcpy(buffer, DEFAULT_LOAD_VALUE);
     return buffer;
 }

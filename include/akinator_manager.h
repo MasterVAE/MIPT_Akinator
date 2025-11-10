@@ -3,11 +3,14 @@
 
 #include "tree_manager.h"
 
-static const char* TREE_FILENAME = "files/tree.tr";
-static const char* DOT_FILENAME = "files/tree.dot";
-static const char* DEFAULT_LOAD_VALUE = "(\"Unknown object\")";
+static const char* const TREE_FILENAME = "files/tree.tr";
+static const char* const DOT_FILENAME = "files/tree.dot";
+static const char* const DEFAULT_LOAD_VALUE = "(\"Unknown object\")";
 
-static const size_t INPUT_BUFFER_SIZE = 200;
+#define INPUT_BUFFER_SIZE 200
+
+#define STR(x) #x
+#define XSTR(x) STR(x)
 
 AkinatorState RunAkinator(Tree* tree);
 

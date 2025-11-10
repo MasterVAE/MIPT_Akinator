@@ -7,11 +7,16 @@
 int main()
 {
     Tree* tree = TreeConstruct();
-    DO(LoadTree(tree, TREE_FILENAME));
+
+    printf("Create new base?\n");
+    int answer = getchar();
+    getchar();
+
+    DO(LoadTree(tree, answer == 'y' ? NULL : TREE_FILENAME));
 
     DO(RunAkinator(tree));
 
-    PrintNode(tree->root);
+    //PrintNode(tree->root);
     TreeDotDump(tree, DOT_FILENAME);
 
     DO(SaveTree(tree, TREE_FILENAME));
