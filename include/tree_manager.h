@@ -3,11 +3,13 @@
 
 #include <stdio.h>
 
-struct TreeNode;
+typedef char* tree_elem_t;
 
 struct TreeNode
 {
-    char* string;
+    tree_elem_t value;
+
+    TreeNode* parent;
 
     TreeNode* left;
     TreeNode* right;
@@ -32,8 +34,10 @@ enum AkinatorState
 };
 
 Tree* TreeConstruct();
-void TreeAdd(TreeNode* node, char* string, TreeAddDir direction);
+TreeNode* NodeConstruct();
+void TreeAdd(TreeNode* node, tree_elem_t elem, TreeAddDir direction);
 void TreeDestroy(Tree* tree);
+void TreeNodeDestroy(TreeNode* node);
 AkinatorState SaveTree(Tree* tree, const char* filename);
 AkinatorState LoadTree(Tree* tree, const char* filename);
 char* LoadToBuffer(const char* filename);

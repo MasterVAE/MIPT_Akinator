@@ -4,7 +4,6 @@
 #include "tree_manager.h"
 
 void PrintNode(TreeNode* node);
-void DotPrintNode(TreeNode* node, FILE* file, int rank);
 
 void TreeDotDump(Tree* tree, const char* filename);
 

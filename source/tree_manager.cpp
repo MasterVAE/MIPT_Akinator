@@ -1,13 +1,12 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <assert.h>
 
 #include "../include/tree_manager.h"
 #include "../include/akinator_manager.h"
 
 static void SaveNode(TreeNode* node, FILE* file);
-static TreeNode* NodeConstruct();
-static void TreeNodeDestroy(TreeNode* node);
 static char* LoadNode(TreeNode* node, char* buffer);
 static size_t FileLength(FILE* file);
 static char* CreateNewBase();
@@ -21,26 +20,28 @@ Tree* TreeConstruct()
     return tree;
 }
 
-static TreeNode* NodeConstruct()
+TreeNode* NodeConstruct()
 {
     TreeNode* node = (TreeNode*)calloc(1, sizeof(TreeNode));
     if(!node) return NULL;
 
-    node->string = NULL;
+    node->value = NULL;
     node->left = NULL;
     node->right = NULL;
+
+    node->parent = NULL;
 
     return node;
 }
 
-static void TreeNodeDestroy(TreeNode* node)
+void TreeNodeDestroy(TreeNode* node)
 {
     if(!node) return;
 
     TreeNodeDestroy(node->left);
     TreeNodeDestroy(node->right);
 
-    free(node->string);
+    free(node->value);
     free(node);
 }
 
@@ -50,7 +51,10 @@ void TreeAdd(TreeNode* node, char* string, TreeAddDir direction)
     if(!string) return;
 
     TreeNode* new_node = NodeConstruct();
-    new_node->string = string;
+    assert(new_node);
+
+    new_node->value = string;
+    new_node->parent = node;
 
     if(direction == TREE_ADD_LEFT)
     {
@@ -99,7 +103,7 @@ static void SaveNode(TreeNode* node, FILE* file)
 {
     if(!node || !file) return;
 
-    fprintf(file, "(\"%s\"", node->string);
+    fprintf(file, "(\"%s\"", node->value);
     
     SaveNode(node->left, file);
     SaveNode(node->right, file);
@@ -110,7 +114,6 @@ static void SaveNode(TreeNode* node, FILE* file)
 AkinatorState LoadTree(Tree* tree, const char* filename)
 {
     if(!tree) return AKINATOR_BUFFER_ERROR;
-    if(!filename) return AKINATOR_FILE_ERROR;
 
     char* buffer = LoadToBuffer(filename);
     if(!buffer) return AKINATOR_BUFFER_ERROR;
@@ -130,9 +133,9 @@ static char* LoadNode(TreeNode* node, char* buffer)
     char c;
     while((c = buffer[len++]) != '\"' && c != '\0');
 
-    node->string = (char*)calloc(len, sizeof(char));
+    node->value = (char*)calloc(len, sizeof(char));
     
-    strncpy(node->string, buffer, len-1);
+    strncpy(node->value, buffer, len-1);
 
     buffer += len;
 
@@ -185,6 +188,8 @@ static size_t FileLength(FILE* file)
 static char* CreateNewBase()
 {
     char* buffer = (char*)calloc(strlen(DEFAULT_LOAD_VALUE) + 1, sizeof(char));
+    assert(buffer);
+
     strcpy(buffer, DEFAULT_LOAD_VALUE);
     return buffer;
 }

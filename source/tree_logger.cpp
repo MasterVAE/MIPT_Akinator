@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <assert.h>
 
 #include "../include/tree_manager.h"
 #include "../include/tree_logger.h"
@@ -7,20 +8,22 @@
 static void TreeDotDumpStart(FILE* file);
 static void TreeDotDumpEnd(FILE* file);
 
+static void DotPrintNode(TreeNode* node, FILE* file, int rank);
+
 void PrintNode(TreeNode* node)
 {
-    if (node == NULL) return;
+    assert(node);
 
     PrintNode(node->left);
 
-    printf("%s ", node->string);
+    printf("%s ", node->value);
 
     PrintNode(node->right);
 }
 
-void DotPrintNode(TreeNode* node, FILE* file, int rank)
+static void DotPrintNode(TreeNode* node, FILE* file, int rank)
 {
-    if (node == NULL) return;
+    assert(node);
 
     fprintf(file, "subgraph cluster_%p                                     \n", node);
     fprintf(file, "{                                                       \n");
@@ -28,7 +31,7 @@ void DotPrintNode(TreeNode* node, FILE* file, int rank)
     fprintf(file, "\trank=%d;                                              \n", rank);
     fprintf(file, "\tfillcolor=lavender;                                   \n");
     fprintf(file, "\t\"%p_address\"[label=\"%p\",fillcolor=\"lavender\"];  \n", node, node);
-    fprintf(file, "\t\"%p_value\"[label=\"%s\",fillcolor=\"lightblue\"];   \n", node, node->string);
+    fprintf(file, "\t\"%p_value\"[label=\"%s\",fillcolor=\"lightblue\"];   \n", node, node->value);
     fprintf(file, "\tsubgraph \"%p_bottom\"                                \n", node);
     fprintf(file, "\t{                                                     \n");
     fprintf(file, "\t\t style=invis;                                       \n");
@@ -61,20 +64,27 @@ void DotPrintNode(TreeNode* node, FILE* file, int rank)
     }
 }
 
-void TreeDotDumpStart(FILE* file)
+static void TreeDotDumpStart(FILE* file)
 {
+    assert(file);
+
     fprintf(file, "digraph G {"
                   "\t node [shape=plaintext, style=\"filled\"];\n"
                   "\t rankdir=TB;\n");
 }
 
-void TreeDotDumpEnd(FILE* file)
+static void TreeDotDumpEnd(FILE* file)
 {
+    assert(file);
+
     fprintf(file, "}\n");
 }
 
 void TreeDotDump(Tree* tree, const char* filename)
-{
+{ 
+    assert(tree);
+    assert(filename);
+
     FILE* file = fopen(filename, "w+");
 
     TreeDotDumpStart(file);
@@ -83,8 +93,8 @@ void TreeDotDump(Tree* tree, const char* filename)
 
     fclose(file);
 
-    char command[100] = {};
-    snprintf(command, 100, "dot -Tpng %s -o files/tree.png", DOT_FILENAME);
+    char command[INPUT_BUFFER_SIZE] = {};
+    snprintf(command, INPUT_BUFFER_SIZE, "dot -Tpng %s -o files/tree.png", DOT_FILENAME);
     system(command);
 
 }

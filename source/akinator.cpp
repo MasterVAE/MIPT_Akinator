@@ -8,13 +8,7 @@ int main()
 {
     Tree* tree = TreeConstruct();
 
-    printf("Create new base?\n");
-    int answer = getchar();
-    getchar();
-
-    DO(LoadTree(tree, answer == 'y' ? NULL : TREE_FILENAME));
-
-    DO(RunAkinator(tree));
+    RunCycle(tree);
 
     //PrintNode(tree->root);
     TreeDotDump(tree, DOT_FILENAME);
