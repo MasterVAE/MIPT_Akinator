@@ -138,25 +138,25 @@ static char* LoadNode(TreeNode* node, char* buffer)
 {
     if(!node || !buffer) return NULL;
 
+    fprintf(stderr, "BUFFER : %s\n", buffer);
+
     buffer += 2;
     size_t len = 0;
     char c;
     while((c = buffer[len++]) != '\"' && c != '\0');
-
     node->value = (char*)calloc(len, sizeof(char));
-    
     strncpy(node->value, buffer, len-1);
 
     buffer += len;
 
     buffer = SkipSpaces(buffer);
 
-    if(buffer[0] == ')') return buffer;
+    if(buffer[0] == ')') return buffer + 1;
 
     TreeNode* left_node = NodeConstruct();
     node->left = left_node;
     left_node->parent = node;
-    buffer = LoadNode(left_node, buffer) + 1;
+    buffer = LoadNode(left_node, buffer);
 
     buffer = SkipSpaces(buffer);
 
@@ -216,7 +216,7 @@ static char* SkipSpaces(char* string)
 {
     assert(string);
 
-    while(isspace(*(string)))
+    while(*string != '\0' && isspace(*(string)))
     {
         string++;
     }
