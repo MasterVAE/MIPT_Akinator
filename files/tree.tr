@@ -1,1 +1,10 @@
-("loves nutella"("Unknown object")("Mongol"("denis")("Vova")))
+("Loves nutella"
+	("Unknown object"
+	)
+	("Curly haircut"
+		("Vova"
+		)
+		("Denis"
+		)
+	)
+)

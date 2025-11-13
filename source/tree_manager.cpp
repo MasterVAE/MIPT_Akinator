@@ -2,13 +2,15 @@
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
+#include <ctype.h>
 
 #include "../include/tree_manager.h"
 #include "../include/akinator_manager.h"
 
-static void SaveNode(TreeNode* node, FILE* file);
+static void SaveNode(TreeNode* node, FILE* file, size_t rank);
 static char* LoadNode(TreeNode* node, char* buffer);
 static size_t FileLength(FILE* file);
+static char* SkipSpaces(char* string);
 static char* CreateNewBase();
 
 Tree* TreeConstruct()
@@ -93,22 +95,30 @@ AkinatorState SaveTree(Tree* tree, const char* filename)
     FILE* file = fopen(filename, "w+");
     if(!file) return AKINATOR_FILE_ERROR;
 
-    SaveNode(tree->root, file);
+    SaveNode(tree->root, file, 0);
     fclose(file);
 
     return AKINATOR_CORRECT;
 }
 
-static void SaveNode(TreeNode* node, FILE* file)
+static void SaveNode(TreeNode* node, FILE* file, size_t rank)
 {
     if(!node || !file) return;
 
-    fprintf(file, "(\"%s\"", node->value);
+    for(size_t tab = 0; tab < rank; tab++)
+    {
+        fprintf(file, "\t");
+    }
+    fprintf(file, "(\"%s\"\n", node->value);
     
-    SaveNode(node->left, file);
-    SaveNode(node->right, file);
+    SaveNode(node->left, file, rank + 1);
+    SaveNode(node->right, file, rank + 1);
 
-    fprintf(file, ")");
+    for(size_t tab = 0; tab < rank; tab++)
+    {
+        fprintf(file, "\t");
+    }
+    fprintf(file, ")\n");
 }
 
 AkinatorState LoadTree(Tree* tree, const char* filename)
@@ -139,15 +149,23 @@ static char* LoadNode(TreeNode* node, char* buffer)
 
     buffer += len;
 
+    buffer = SkipSpaces(buffer);
+
     if(buffer[0] == ')') return buffer;
 
     TreeNode* left_node = NodeConstruct();
     node->left = left_node;
+    left_node->parent = node;
     buffer = LoadNode(left_node, buffer) + 1;
+
+    buffer = SkipSpaces(buffer);
 
     TreeNode* right_node = NodeConstruct();
     node->right = right_node;
+    right_node->parent = node;
     buffer = LoadNode(right_node, buffer);
+
+    buffer = SkipSpaces(buffer);
     return buffer + 1;
 }
 
@@ -192,4 +210,14 @@ static char* CreateNewBase()
 
     strcpy(buffer, DEFAULT_LOAD_VALUE);
     return buffer;
+}
+
+static char* SkipSpaces(char* string)
+{
+    while(isspace(*(string)))
+    {
+        string++;
+    }
+
+    return string;
 }

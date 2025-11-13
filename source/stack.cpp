@@ -14,12 +14,12 @@ bool IsError(int error, StackError check)
 
 void ErrorParser(int error)
 {
-    if(IsError(error, StackNull)) fprintf(ERROR_STREAM, "Error: stack NULL\n");
+    if(IsError(error, StackNull))       fprintf(ERROR_STREAM, "Error: stack NULL\n");
     if(IsError(error, CapacityInvalid)) fprintf(ERROR_STREAM, "Error: capacity invalid\n");
-    if(IsError(error, DataNull)) fprintf(ERROR_STREAM, "Error: data NULL\n");
-    if(IsError(error, StackOverflow)) fprintf(ERROR_STREAM, "Error: stack overflow\n");
-    if(IsError(error, StackUnderflow)) fprintf(ERROR_STREAM, "Error: stack underflow\n");
-    if(IsError(error, DataCorrupted)) fprintf(ERROR_STREAM, "Error: data corrupted\n");
+    if(IsError(error, DataNull))        fprintf(ERROR_STREAM, "Error: data NULL\n");
+    if(IsError(error, StackOverflow))   fprintf(ERROR_STREAM, "Error: stack overflow\n");
+    if(IsError(error, StackUnderflow))  fprintf(ERROR_STREAM, "Error: stack underflow\n");
+    if(IsError(error, DataCorrupted))   fprintf(ERROR_STREAM, "Error: data corrupted\n");
 }
 
 int StackVerify(Stack_t* stack)
@@ -29,8 +29,6 @@ int StackVerify(Stack_t* stack)
     if(stack->capacity == 0) stack->err_code |= CapacityInvalid;
     if(stack->size > stack->capacity) stack->err_code |= StackOverflow;
     if(stack->data == NULL) return stack->err_code |= DataNull;
-    if(stack->data[0] != SHIELD_START || stack->data[1 + stack->capacity] != SHIELD_END) \
-        return stack->err_code |= DataCorrupted;
 
     return stack->err_code;
 }
@@ -43,8 +41,6 @@ int StackInit(Stack_t* stack, size_t capacity)
     stack->capacity = capacity;
     stack->size = 0;
     stack->data = (stack_type*)calloc(capacity + 2 * shield_size, sizeof(stack_type));
-    stack->data[0] = SHIELD_START;
-    stack->data[1 * shield_size + capacity] = SHIELD_END;
     stack->err_code = 0;
 
     return StackVerify(stack);
@@ -64,8 +60,7 @@ int StackPush(Stack_t* stack, stack_type value)
 
     stack->capacity *= STACK_MULTIPLIER;
     stack->data = (stack_type*)realloc(stack->data, (stack->capacity + 2 * shield_size) * sizeof(stack_type));
-    stack->data[1 * shield_size + stack->capacity] = SHIELD_END;
-    
+
     err = StackVerify(stack); if(err != 0) return err;
 
     stack->data[1 * shield_size + stack->size++] = value;
@@ -119,37 +114,16 @@ void StackDump(Stack_t* stack)
         fprintf(ERROR_STREAM, "NULL DATA\n");
         return;
     }
-    if(stack->data[0] == SHIELD_START)
-    {
-        fprintf(ERROR_STREAM, "GUARD 1: %X (MUST BE %X)\n",\
-            (unsigned int)stack->data[0], (unsigned int)SHIELD_START);
-    }
-    else
-    {
-        fprintf(ERROR_STREAM, "GUARD 1: %X (MUST BE %X)\n",\
-            (unsigned int)stack->data[0], (unsigned int)SHIELD_START);
-    }
-
-    if(stack->data[stack->capacity+1] == SHIELD_END)
-    {
-        fprintf(ERROR_STREAM, "GUARD 2: %X (MUST BE %X)\n",\
-            (unsigned int)stack->data[stack->capacity + 1 * shield_size], (unsigned int)SHIELD_END);
-    }
-    else
-    {
-        fprintf(ERROR_STREAM, "GUARD 2: %X (MUST BE %X\n",\
-            (unsigned int)stack->data[stack->capacity + 1 * shield_size], (unsigned int)SHIELD_END);
-    }
         fprintf(ERROR_STREAM, "DATA: \n\n");
     for(size_t i = 1; i < stack->capacity + 1 * shield_size; i++)
     {
         if(i <= stack->size)
         {
-        fprintf(ERROR_STREAM, " *[%lu] %d\n", i, stack->data[i]);
+        fprintf(ERROR_STREAM, " *[%lu] %p\n", i, stack->data[i]);
         }
         else
         {
-        fprintf(ERROR_STREAM, "  [%lu] %d\n", i, stack->data[i]);
+        fprintf(ERROR_STREAM, "  [%lu] %p\n", i, stack->data[i]);
         }
     }
 

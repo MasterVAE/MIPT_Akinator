@@ -14,6 +14,7 @@ static const char* const DEFAULT_LOAD_VALUE = "(\"Unknown object\")";
 
 AkinatorState RunAkinator(Tree* tree);
 AkinatorState RunCycle(Tree* tree);
+TreeNode* FindNode(TreeNode* node, const char* value);
 
 #define DO(state)                                       \
 {                                                       \
@@ -26,7 +27,5 @@ AkinatorState RunCycle(Tree* tree);
         return state_var;                               \
     }                                                   \
 }
-
-void ClearInput();
 
 #endif // AKINATOR_MANAGER_H_

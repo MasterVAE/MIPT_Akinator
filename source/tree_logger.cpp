@@ -12,7 +12,7 @@ static void DotPrintNode(TreeNode* node, FILE* file, int rank);
 
 void PrintNode(TreeNode* node)
 {
-    assert(node);
+    if(!node) return;
 
     PrintNode(node->left);
 

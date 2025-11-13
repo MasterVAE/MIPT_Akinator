@@ -3,10 +3,10 @@
 
 #include <stdio.h>
 
-typedef char* stack_type;
+#include "tree_manager.h"
 
-const int SHIELD_START = 0x6BADF00D;
-const int SHIELD_END = 0x7BADF00D;
+typedef TreeNode* stack_type;
+
 #define ERROR_STREAM stderr
 const int STACK_MULTIPLIER = 2;
 
