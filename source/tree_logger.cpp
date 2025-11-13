@@ -24,6 +24,7 @@ void PrintNode(TreeNode* node)
 static void DotPrintNode(TreeNode* node, FILE* file, int rank)
 {
     assert(node);
+    assert(file);
 
     fprintf(file, "subgraph cluster_%p                                     \n", node);
     fprintf(file, "{                                                       \n");

@@ -16,7 +16,7 @@ static char* CreateNewBase();
 Tree* TreeConstruct()
 {
     Tree* tree = (Tree*)calloc(1, sizeof(Tree));
-    if(!tree) return NULL;
+    assert(tree);
 
     tree->root = NodeConstruct();
     return tree;
@@ -25,7 +25,7 @@ Tree* TreeConstruct()
 TreeNode* NodeConstruct()
 {
     TreeNode* node = (TreeNode*)calloc(1, sizeof(TreeNode));
-    if(!node) return NULL;
+    assert(node);
 
     node->value = NULL;
     node->left = NULL;
@@ -77,7 +77,7 @@ void TreeAdd(TreeNode* node, char* string, TreeAddDir direction)
 
 void TreeDestroy(Tree* tree)
 {
-    if(!tree) return;
+    assert(tree);
 
     if(tree->root)
     {
@@ -194,7 +194,7 @@ char* LoadToBuffer(const char* filename)
 
 static size_t FileLength(FILE* file)
 {
-    if(!file) return 0;
+    assert(file);
 
     fseek(file, 0, SEEK_END);
     size_t filesize = (size_t)ftell(file);
@@ -214,6 +214,8 @@ static char* CreateNewBase()
 
 static char* SkipSpaces(char* string)
 {
+    assert(string);
+
     while(isspace(*(string)))
     {
         string++;

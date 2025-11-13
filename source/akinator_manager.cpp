@@ -23,6 +23,8 @@ static void CreateParentStack(Stack_t* stack, TreeNode* node);
 
 AkinatorState RunCycle(Tree* tree)
 {
+    assert(tree);
+
     while(true)
     {
         printf(CLEAR);
@@ -178,6 +180,8 @@ AkinatorState RunAkinator(Tree* tree)
 
 static AkinatorState DescriptionAkinator(Tree* tree)
 {
+    assert(tree);
+
     printf(CLEAR);
     printf("    \t┏━━━━━━━━━━━━━━━━━━━━━━━┓\n"
                "\t┃      Write object,    ┃\n"
@@ -231,6 +235,8 @@ static AkinatorState DescriptionAkinator(Tree* tree)
 
 static AkinatorState ComparatorAkinator(Tree* tree)
 {
+    assert(tree);
+
     printf(CLEAR);
     printf("    \t┏━━━━━━━━━━━━━━━━━━━━━━━┓\n"
                "\t┃     Write objects,    ┃\n"
@@ -265,6 +271,9 @@ static AkinatorState ComparatorAkinator(Tree* tree)
 
 static void CompareNodes(TreeNode* node1, TreeNode* node2)
 {
+    assert(node1);
+    assert(node2);
+
     Stack_t* parent_stack1 = (Stack_t*)calloc(1, sizeof(Stack_t));
     Stack_t* parent_stack2 = (Stack_t*)calloc(1, sizeof(Stack_t));
 
