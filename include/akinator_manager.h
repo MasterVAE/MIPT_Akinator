@@ -12,7 +12,6 @@ static const char* const DEFAULT_LOAD_VALUE = "(\"Unknown object\")";
 #define STR(x) #x
 #define XSTR(x) STR(x)
 
-AkinatorState RunAkinator(Tree* tree);
 AkinatorState RunCycle(Tree* tree);
 TreeNode* FindNode(TreeNode* node, const char* value);
 

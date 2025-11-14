@@ -16,10 +16,12 @@
 #define CLEAR "\033[H\033[2J"
 
 static void ClearInput();
+static AkinatorState RunAkinator(Tree* tree);
 static AkinatorState DescriptionAkinator(Tree* tree);
 static AkinatorState ComparatorAkinator(Tree* tree);
 static void CompareNodes(TreeNode* node1, TreeNode* node2);
 static void CreateParentStack(Stack_t* stack, TreeNode* node);
+static void InsertText(const char* text, size_t count);
 
 AkinatorState RunCycle(Tree* tree)
 {
@@ -82,7 +84,7 @@ AkinatorState RunCycle(Tree* tree)
     return AKINATOR_CORRECT;
 }
 
-AkinatorState RunAkinator(Tree* tree)
+static AkinatorState RunAkinator(Tree* tree)
 {
     assert(tree);
 
@@ -103,7 +105,14 @@ AkinatorState RunAkinator(Tree* tree)
         if(current_node->left == NULL && current_node->right == NULL)
         {
             printf(CLEAR);
-            printf("Is it %s? [y/n]\n", current_node->value);
+            printf("\t┏━━━━━━━━━━━━━━━━━━━━━━━┓\n"
+                   "\t┃         Is it         ┃\n"
+                   "\t┃"                        );
+            InsertText(current_node->value, 23);
+            printf(                          "┃\n"
+                   "\t┃     [yes]    [no]     ┃\n"
+                   "\t┗━━━━━━━━━━━━━━━━━━━━━━━┛\n"
+            );
 
             int answer = getchar();
             ClearInput();
@@ -166,7 +175,13 @@ AkinatorState RunAkinator(Tree* tree)
         else
         {
             printf(CLEAR);
-            printf("%s [y/n]\n", current_node->value);
+            printf("\t┏━━━━━━━━━━━━━━━━━━━━━━━┓\n"
+                   "\t┃"                        );
+            InsertText(current_node->value, 23);
+            printf(                          "┃\n"
+                   "\t┃     [yes]    [no]     ┃\n"
+                   "\t┗━━━━━━━━━━━━━━━━━━━━━━━┛\n"
+            );            
 
             int answer = getchar();
             ClearInput();
@@ -203,6 +218,12 @@ static AkinatorState DescriptionAkinator(Tree* tree)
 
         CreateParentStack(parent_stack, node);
 
+        printf(CLEAR);
+        printf("\t┏━━━━━━━━━━━━━━━━━━━━━━━┓\n"
+               "\t┃");
+        InsertText(node->value, 23);
+        printf("┃\n");
+        printf("\t┠───────────────────────┨\n");
         while(parent_stack->size > 1)
         {
             TreeNode* stack_node = StackPop(parent_stack);
@@ -210,15 +231,20 @@ static AkinatorState DescriptionAkinator(Tree* tree)
             
             if(stack_node->right == next_node)
             {
-                printf("-> %s\n", stack_node->value);
+                printf("\t┃-> ");
+                InsertText(stack_node->value, 20);
+                printf("┃\n");
             }
             else
             {
-                printf("-> Not %s\n", stack_node->value);
+                printf("\t┃-> Not ");
+                InsertText(stack_node->value, 16);
+                printf("┃\n");
             }
 
             StackPush(parent_stack, next_node);
         }
+        printf("\t┗━━━━━━━━━━━━━━━━━━━━━━━┛\n");
         usleep(5000000);
 
         StackDestroy(parent_stack);
@@ -226,7 +252,11 @@ static AkinatorState DescriptionAkinator(Tree* tree)
     }
     else
     {
-        printf("Not found\n");
+        printf(CLEAR);
+        printf("\t┏━━━━━━━━━━━━━━━━━━━━━━━┓\n"
+               "\t┃       Not found       ┃\n"
+               "\t┗━━━━━━━━━━━━━━━━━━━━━━━┛\n"
+        );
         usleep(1000000);
     }
 
@@ -262,7 +292,11 @@ static AkinatorState ComparatorAkinator(Tree* tree)
     }
     else
     {
-        printf("Not found\n");
+        printf(CLEAR);
+        printf("\t┏━━━━━━━━━━━━━━━━━━━━━━━┓\n"
+               "\t┃       Not found       ┃\n"
+               "\t┗━━━━━━━━━━━━━━━━━━━━━━━┛\n"
+        );
         usleep(1000000);
     }
 
@@ -283,7 +317,18 @@ static void CompareNodes(TreeNode* node1, TreeNode* node2)
     CreateParentStack(parent_stack1, node1);
     CreateParentStack(parent_stack2, node2);
 
-    printf("-- COMMON:\n");
+    printf(CLEAR);
+    printf("\t┏━━━━━━━━━━━━━━━━━━━━━━━┓\n"
+           "\t┃");
+    InsertText(node1->value, 23);
+    printf("┃\n");
+    printf("\t┠───────────────────────┨\n\t┃");
+    InsertText(node2->value, 23);
+    printf(  "┃\n"
+           "\t┠───────────────────────┨\n"
+           "\t┃        COMMON         ┃\n");
+
+    
     
     while(parent_stack1->size > 1 && parent_stack2->size > 1)
     {
@@ -295,11 +340,15 @@ static void CompareNodes(TreeNode* node1, TreeNode* node2)
         
         if(stack_node1->right == next_node1 && stack_node2->right == next_node2)
         {
-            printf("-> %s\n", stack_node1->value);
+            printf("\t┃-> ");
+            InsertText(stack_node1->value, 20);
+            printf("┃\n");
         }
         else if(stack_node1->left == next_node1 && stack_node2->left == next_node2)
         {
-            printf("-> Not %s\n", stack_node1->value);
+            printf("\t┃-> Not ");
+            InsertText(stack_node1->value, 16);
+            printf("┃\n");
         }
         else
         {
@@ -316,9 +365,12 @@ static void CompareNodes(TreeNode* node1, TreeNode* node2)
         StackPush(parent_stack2, next_node2);
     }
 
-    printf("-- DIFFERENT:\n");
+    printf("\t┠───────────────────────┨\n"
+           "\t┃       DIFFERENT       ┃\n");
 
-    printf("-- %s:\n", node1->value);
+    printf("\t┃");
+    InsertText(node1->value, 23);
+    printf("┃\n");
     while(parent_stack1->size > 1)
     {
         TreeNode* stack_node = StackPop(parent_stack1);
@@ -326,17 +378,23 @@ static void CompareNodes(TreeNode* node1, TreeNode* node2)
         
         if(stack_node->right == next_node)
         {
-            printf("-> %s\n", stack_node->value);
+            printf("\t┃-> ");
+            InsertText(stack_node->value, 20);
+            printf("┃\n");
         }
         else
         {
-            printf("-> Not %s\n", stack_node->value);
+            printf("\t┃-> Not ");
+            InsertText(stack_node->value, 16);
+            printf("┃\n");
         }
 
         StackPush(parent_stack1, next_node);
     }
 
-    printf("-- %s:\n", node2->value);
+    printf("\t┃");
+    InsertText(node2->value, 23);
+    printf("┃\n");
     while(parent_stack2->size > 1)
     {
         TreeNode* stack_node = StackPop(parent_stack2);
@@ -344,15 +402,21 @@ static void CompareNodes(TreeNode* node1, TreeNode* node2)
         
         if(stack_node->right == next_node)
         {
-            printf("-> %s\n", stack_node->value);
+            printf("\t┃-> ");
+            InsertText(stack_node->value, 20);
+            printf("┃\n");
         }
         else
         {
-            printf("-> Not %s\n", stack_node->value);
+            printf("\t┃-> Not ");
+            InsertText(stack_node->value, 16);
+            printf("┃\n");
         }
 
         StackPush(parent_stack2, next_node);
     }
+
+    printf("\t┗━━━━━━━━━━━━━━━━━━━━━━━┛\n");
 
     StackDestroy(parent_stack1);
     free(parent_stack1);
@@ -391,4 +455,25 @@ static void CreateParentStack(Stack_t* stack, TreeNode* node)
     StackPush(stack, node);
 
     CreateParentStack(stack, node->parent);
+}
+
+static void InsertText(const char* text, size_t count)
+{
+    size_t len = strlen(text);
+
+    size_t spaces_before = (count - len)/2;
+    size_t spaces_after = count - len - spaces_before;
+
+    for(size_t i = 0; i < spaces_before; i++)
+    {
+        printf(" ");
+    }
+
+    printf("%s", text);
+
+    for(size_t i = 0; i < spaces_after; i++)
+    {
+        printf(" ");
+    }
+
 }

@@ -29,7 +29,7 @@ TARGET = $(TARGET_DIR)/akinator.out
 HEADERS = $(wildcard $(INCLUDE_DIR)/*.h)
 
 $(TARGET): $(OBJECTS) | $(TARGET_DIR) $(FILES_DIR)
-	@$(CC) $(CFLAGS) $^ -o $@
+	@$(CC) $(CFLAGS) $^ -o $@ -lncurses
 	@echo "LINKED $@"
 
 run: $(TARGET)
