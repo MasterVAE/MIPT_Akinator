@@ -19,6 +19,9 @@ static void ClearInput();
 static AkinatorState RunAkinator(Tree* tree);
 static AkinatorState DescriptionAkinator(Tree* tree);
 static AkinatorState ComparatorAkinator(Tree* tree);
+static void PrintCommon(Stack_t* parent_stack1, Stack_t* parent_stack2);
+static void PrintDifferent(Stack_t* parent_stack1, Stack_t* parent_stack2, 
+                           TreeNode* node1, TreeNode* node2);
 static void CompareNodes(TreeNode* node1, TreeNode* node2);
 static void CreateParentStack(Stack_t* stack, TreeNode* node);
 static void InsertText(const char* text, size_t count);
@@ -328,8 +331,26 @@ static void CompareNodes(TreeNode* node1, TreeNode* node2)
            "\t┠───────────────────────┨\n"
            "\t┃        COMMON         ┃\n");
 
-    
-    
+    PrintCommon(parent_stack1, parent_stack2);
+
+    printf("\t┠───────────────────────┨\n"
+           "\t┃       DIFFERENT       ┃\n");
+
+    PrintDifferent(parent_stack1, parent_stack1, node1, node2);
+
+    printf("\t┗━━━━━━━━━━━━━━━━━━━━━━━┛\n");
+
+    StackDestroy(parent_stack1);
+    free(parent_stack1);
+    StackDestroy(parent_stack2);
+    free(parent_stack2);
+}
+
+static void PrintCommon(Stack_t* parent_stack1, Stack_t* parent_stack2)
+{
+    assert(parent_stack1);
+    assert(parent_stack2);
+
     while(parent_stack1->size > 1 && parent_stack2->size > 1)
     {
         TreeNode* stack_node1 = StackPop(parent_stack1);
@@ -364,9 +385,15 @@ static void CompareNodes(TreeNode* node1, TreeNode* node2)
         StackPush(parent_stack1, next_node1);
         StackPush(parent_stack2, next_node2);
     }
+}
 
-    printf("\t┠───────────────────────┨\n"
-           "\t┃       DIFFERENT       ┃\n");
+static void PrintDifferent(Stack_t* parent_stack1, Stack_t* parent_stack2, 
+                           TreeNode* node1, TreeNode* node2)
+{
+    assert(parent_stack1);
+    assert(parent_stack2);
+    assert(node1);
+    assert(node2);
 
     printf("\t┃");
     InsertText(node1->value, 23);
@@ -415,13 +442,6 @@ static void CompareNodes(TreeNode* node1, TreeNode* node2)
 
         StackPush(parent_stack2, next_node);
     }
-
-    printf("\t┗━━━━━━━━━━━━━━━━━━━━━━━┛\n");
-
-    StackDestroy(parent_stack1);
-    free(parent_stack1);
-    StackDestroy(parent_stack2);
-    free(parent_stack2);
 }
 
 
