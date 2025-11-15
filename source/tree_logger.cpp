@@ -1,9 +1,9 @@
 #include <stdlib.h>
 #include <assert.h>
 
-#include "../include/tree_manager.h"
-#include "../include/tree_logger.h"
-#include "../include/akinator_manager.h"
+#include "tree_manager.h"
+#include "tree_logger.h"
+#include "akinator_manager.h"
 
 static void TreeDotDumpStart(FILE* file);
 static void TreeDotDumpEnd(FILE* file);

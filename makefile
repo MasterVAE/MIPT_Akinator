@@ -1,5 +1,3 @@
-.DEFAULT_GOAL := bld
-
 OBJ_DIR = build/obj
 TARGET_DIR = build
 SOURCE_DIR = source
@@ -7,7 +5,7 @@ INCLUDE_DIR = include
 FILES_DIR = files
 
 CC = g++
-CFLAGS = -D _DEBUG -ggdb3 -std=c++17 -Wall -Wextra -Weffc++ -Waggressive-loop-optimizations \
+CFLAGS = -D _DEBUG -ggdb3 -std=c++17 -Wall -Wextra -Weffc++ -Waggressive-loop-optimizations -I\
 		 -Wc++14-compat -Wmissing-declarations -Wcast-align -Wcast-qual -Wchar-subscripts \
 		 -Wconditionally-supported -Wconversion -Wctor-dtor-privacy -Wempty-body -Wfloat-equal\
 		 -Wformat-nonliteral -Wformat-security -Wformat-signedness -Wformat=2 -Winline -Wlogical-op\
@@ -22,15 +20,17 @@ CFLAGS = -D _DEBUG -ggdb3 -std=c++17 -Wall -Wextra -Weffc++ -Waggressive-loop-op
 		 -pie -fPIE -Werror=vla\
 		 -fsanitize=address,alignment,bool,bounds,enum,float-cast-overflow,float-divide-by-zero,integer-divide-by-zero,leak,nonnull-attribute,null,object-size,return,returns-nonnull-attribute,shift,signed-integer-overflow,undefined,unreachable,vla-bound,vptr
 
-SOURCES = akinator.cpp tree_manager.cpp tree_logger.cpp akinator_manager.cpp stack.cpp
+SOURCES = main.cpp tree_manager.cpp tree_logger.cpp akinator_manager.cpp stack.cpp
 OBJECTS := $(addprefix $(OBJ_DIR)/, $(SOURCES:.cpp=.o))
 TARGET = $(TARGET_DIR)/akinator.out
 
 HEADERS = $(wildcard $(INCLUDE_DIR)/*.h)
 
 $(TARGET): $(OBJECTS) | $(TARGET_DIR) $(FILES_DIR)
-	@$(CC) $(CFLAGS) $^ -o $@ -lncurses
+	@$(CC) $(CFLAGS) $^ -o $@
 	@echo "LINKED $@"
+
+all: bld
 
 run: $(TARGET)
 	@./$(TARGET)

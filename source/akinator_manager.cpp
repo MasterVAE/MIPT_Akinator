@@ -3,8 +3,8 @@
 #include <assert.h>
 #include <stack.h>
 
-#include "../include/akinator_manager.h"
-#include "../include/tree_manager.h"
+#include "akinator_manager.h"
+#include "tree_manager.h"
 
 #define TRY(var)                                    \
 {                                                   \

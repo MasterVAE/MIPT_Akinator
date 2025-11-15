@@ -4,8 +4,8 @@
 #include <assert.h>
 #include <ctype.h>
 
-#include "../include/tree_manager.h"
-#include "../include/akinator_manager.h"
+#include "tree_manager.h"
+#include "akinator_manager.h"
 
 static void SaveNode(TreeNode* node, FILE* file, size_t rank);
 static char* LoadNode(TreeNode* node, char* buffer);
