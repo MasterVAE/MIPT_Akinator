@@ -10,7 +10,7 @@ int main()
 
     DO(RunCycle(tree));
 
-    TreeDotDump(tree, DOT_FILENAME);
+    TreeDotDump(tree, DOT_FILENAME, DotPrintString);
     TreeDestroy(tree);
 
     return 0;

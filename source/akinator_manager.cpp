@@ -561,3 +561,8 @@ static void AnyButtonExit()
     getchar();
     ClearInput();
 }
+
+void DotPrintString(FILE* file, TreeNode* node)
+{
+    fprintf(file, "\t\"%p_value\"[label=\"%s\",fillcolor=\"lightblue\"];   \n", node, node->value); 
+}

@@ -8,7 +8,8 @@
 static void TreeDotDumpStart(FILE* file);
 static void TreeDotDumpEnd(FILE* file);
 
-static void DotPrintNode(TreeNode* node, FILE* file, int rank);
+static void DotPrintNode(TreeNode* node, FILE* file, int rank, 
+                                                     void (*DotPrintValue)(FILE*, TreeNode*));
 
 void PrintNode(TreeNode* node)
 {
@@ -21,7 +22,8 @@ void PrintNode(TreeNode* node)
     PrintNode(node->right);
 }
 
-static void DotPrintNode(TreeNode* node, FILE* file, int rank)
+static void DotPrintNode(TreeNode* node, FILE* file, int rank, 
+                                                     void (*DotPrintValue)(FILE*, TreeNode*))
 {
     assert(node);
     assert(file);
@@ -32,8 +34,9 @@ static void DotPrintNode(TreeNode* node, FILE* file, int rank)
     fprintf(file, "\trank=%d;                                              \n", rank);
     fprintf(file, "\tfillcolor=lavender;                                   \n");
     fprintf(file, "\t\"%p_address\"[label=\"%p\",fillcolor=\"lavender\"];  \n", node, node);
-    fprintf(file, "\t\"%p_value\"[label=\"%s\",fillcolor=\"lightblue\"];   \n", node, node->value); 
-    // TODO - func for printing data as argument of function
+
+    DotPrintValue(file, node);
+
     fprintf(file, "\tsubgraph \"%p_bottom\"                                \n", node);
     fprintf(file, "\t{                                                     \n");
     fprintf(file, "\t\t style=invis;                                       \n");
@@ -57,12 +60,12 @@ static void DotPrintNode(TreeNode* node, FILE* file, int rank)
     if (node->left)
     {
         fprintf(file, "\"%p_left\" -> \"%p_address\";\n", node, node->left);
-        DotPrintNode(node->left, file, rank + 1);
+        DotPrintNode(node->left, file, rank + 1, DotPrintValue);
     }
     if (node->right)
     {
         fprintf(file, "\"%p_right\" -> \"%p_address\";\n", node, node->right);
-        DotPrintNode(node->right, file, rank + 1);
+        DotPrintNode(node->right, file, rank + 1, DotPrintValue);
     }
 }
 
@@ -82,7 +85,7 @@ static void TreeDotDumpEnd(FILE* file)
     fprintf(file, "}\n");
 }
 
-void TreeDotDump(Tree* tree, const char* filename)
+void TreeDotDump(Tree* tree, const char* filename, void (*DotPrintValue)(FILE*, TreeNode*))
 { 
     assert(tree);
     assert(filename);
@@ -90,7 +93,7 @@ void TreeDotDump(Tree* tree, const char* filename)
     FILE* file = fopen(filename, "w+");
 
     TreeDotDumpStart(file);
-    DotPrintNode(tree->root, file, 0);
+    DotPrintNode(tree->root, file, 0, DotPrintValue);
     TreeDotDumpEnd(file);
 
     fclose(file);

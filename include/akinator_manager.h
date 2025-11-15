@@ -14,6 +14,7 @@ static const char* const DEFAULT_LOAD_VALUE = "(\"Unknown object\")";
 
 AkinatorState RunCycle(Tree* tree);
 TreeNode* FindNode(TreeNode* node, const char* value);
+void DotPrintString(FILE* file, TreeNode* node); 
 
 #define DO(state)                                       \
 {                                                       \
@@ -21,7 +22,7 @@ TreeNode* FindNode(TreeNode* node, const char* value);
     if(state_var != AKINATOR_CORRECT)                   \
     {                                                   \
         printf("Error occurred: %d\n", state_var);      \
-        TreeDotDump(tree, DOT_FILENAME);                \
+        TreeDotDump(tree, DOT_FILENAME, DotPrintString);\
         TreeDestroy(tree);                              \
         return state_var;                               \
     }                                                   \

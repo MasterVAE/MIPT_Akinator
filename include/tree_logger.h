@@ -5,6 +5,6 @@
 
 void PrintNode(TreeNode* node);
 
-void TreeDotDump(Tree* tree, const char* filename);
+void TreeDotDump(Tree* tree, const char* filename, void (*DotPrintValue)(FILE*, TreeNode*));
 
 #endif // TREE_LOGGER_H_
