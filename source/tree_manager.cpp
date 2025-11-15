@@ -19,6 +19,11 @@ Tree* TreeConstruct()
     assert(tree);
 
     tree->root = NodeConstruct();
+
+    assert(tree->root);
+
+    tree->root->value = strdup("Unknown object");
+
     return tree;
 }
 
@@ -138,12 +143,12 @@ static char* LoadNode(TreeNode* node, char* buffer)
 {
     if(!node || !buffer) return NULL;
 
-    fprintf(stderr, "BUFFER : %s\n", buffer);
-
     buffer += 2;
     size_t len = 0;
     char c;
     while((c = buffer[len++]) != '\"' && c != '\0');
+
+    free(node->value);
     node->value = (char*)calloc(len, sizeof(char));
     strncpy(node->value, buffer, len-1);
 

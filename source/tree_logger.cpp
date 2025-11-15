@@ -32,7 +32,8 @@ static void DotPrintNode(TreeNode* node, FILE* file, int rank)
     fprintf(file, "\trank=%d;                                              \n", rank);
     fprintf(file, "\tfillcolor=lavender;                                   \n");
     fprintf(file, "\t\"%p_address\"[label=\"%p\",fillcolor=\"lavender\"];  \n", node, node);
-    fprintf(file, "\t\"%p_value\"[label=\"%s\",fillcolor=\"lightblue\"];   \n", node, node->value);
+    fprintf(file, "\t\"%p_value\"[label=\"%s\",fillcolor=\"lightblue\"];   \n", node, node->value); 
+    // TODO - func for printing data as argument of function
     fprintf(file, "\tsubgraph \"%p_bottom\"                                \n", node);
     fprintf(file, "\t{                                                     \n");
     fprintf(file, "\t\t style=invis;                                       \n");

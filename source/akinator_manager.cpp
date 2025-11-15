@@ -1,7 +1,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include <assert.h>
-#include <unistd.h>
 #include <stack.h>
 
 #include "../include/akinator_manager.h"
@@ -15,6 +14,8 @@
 
 #define CLEAR "\033[H\033[2J"
 
+static const size_t WINDOW_WIDTH = 23;
+
 static void ClearInput();
 static AkinatorState RunAkinator(Tree* tree);
 static AkinatorState DescriptionAkinator(Tree* tree);
@@ -25,6 +26,7 @@ static void PrintDifferent(Stack_t* parent_stack1, Stack_t* parent_stack2,
 static void CompareNodes(TreeNode* node1, TreeNode* node2);
 static void CreateParentStack(Stack_t* stack, TreeNode* node);
 static void InsertText(const char* text, size_t count);
+static void AnyButtonExit();
 
 AkinatorState RunCycle(Tree* tree)
 {
@@ -38,48 +40,61 @@ AkinatorState RunCycle(Tree* tree)
                "\t┃ Welcome to Bibinator! ┃\n"
                "\t┠───────────────────────┨\n"
                "\t┃ Choose gamemode:      ┃\n"
-               "\t┃ New database    [n]   ┃\n"
-               "\t┃ Play            [p]   ┃\n"
-               "\t┃ Description     [d]   ┃\n"
-               "\t┃ Comparasion     [c]   ┃\n"
-               "\t┃ Quit            [q]   ┃\n"
-               "\t┗━━━━━━━━━━━━━━━━━━━━━━━┛\n"
-        );
+               "\t┃ Load database   [%c]   ┃\n"
+               "\t┃ Save database   [%c]   ┃\n"
+               "\t┃ Play            [%c]   ┃\n"
+               "\t┃ Description     [%c]   ┃\n"
+               "\t┃ Comparasion     [%c]   ┃\n"
+               "\t┃ Quit            [%c]   ┃\n"
+               "\t┗━━━━━━━━━━━━━━━━━━━━━━━┛\n",
+        INPUT_LOAD, INPUT_SAVE, INPUT_PLAY, INPUT_DESCRIPTION, INPUT_COMPARATOR, INPUT_QUIT);
         int answer = getchar();
         ClearInput();
-
-        if(answer == 'q')
+        
+        if(answer == INPUT_QUIT)
         {
             break;
         }
-        else if(answer == 'n')
+        else if(answer == INPUT_LOAD)
         {
+            printf(CLEAR);
+            printf("\t┏━━━━━━━━━━━━━━━━━━━━━━━┓\n"
+                   "\t┃    Input filename     ┃\n"
+                   "\t┗━━━━━━━━━━━━━━━━━━━━━━━┛\n\n"
+            );
+
+            char filename[INPUT_BUFFER_SIZE + 1];
+            scanf("%" XSTR(INPUT_BUFFER_SIZE) "[^\n]", filename);
+            ClearInput();
+
             TreeNodeDestroy(tree->root);
             tree->root = NodeConstruct();
-            TRY(LoadTree(tree, NULL));
-            TRY(RunAkinator(tree));
-            SaveTree(tree, TREE_FILENAME);
+            TRY(LoadTree(tree, filename));
         }
-        else if(answer == 'p')
+        else if(answer == INPUT_SAVE)
         {
-            TreeNodeDestroy(tree->root);
-            tree->root = NodeConstruct();
-            TRY(LoadTree(tree, TREE_FILENAME));
-            TRY(RunAkinator(tree));
-            SaveTree(tree, TREE_FILENAME);
+            printf(CLEAR);
+            printf("\t┏━━━━━━━━━━━━━━━━━━━━━━━┓\n"
+                   "\t┃    Input filename     ┃\n"
+                   "\t┗━━━━━━━━━━━━━━━━━━━━━━━┛\n\n"
+            );
+
+            char filename[INPUT_BUFFER_SIZE + 1];
+            scanf("%" XSTR(INPUT_BUFFER_SIZE) "[^\n]", filename);
+            ClearInput();
+
+            TRY(SaveTree(tree, filename));
         }
-        else if(answer == 'd')
+        else if(answer == INPUT_PLAY)
         {
-            TreeNodeDestroy(tree->root);
-            tree->root = NodeConstruct();
-            TRY(LoadTree(tree, TREE_FILENAME));
+            TRY(RunAkinator(tree));
+        }
+        else if(answer == INPUT_DESCRIPTION)
+        {
             TRY(DescriptionAkinator(tree));
         }
-        else if(answer == 'c')
+        else if(answer == INPUT_COMPARATOR)
         {
-            TreeNodeDestroy(tree->root);
-            tree->root = NodeConstruct();
-            TRY(LoadTree(tree, TREE_FILENAME));
             TRY(ComparatorAkinator(tree));
         }
     }
@@ -91,16 +106,7 @@ static AkinatorState RunAkinator(Tree* tree)
 {
     assert(tree);
 
-    printf(CLEAR);
-    printf("    \t┏━━━━━━━━━━━━━━━━━━━━━━━┓\n"
-               "\t┃  Think of an object,  ┃\n"
-               "\t┃    and I will try     ┃\n"
-               "\t┃     to guess it!      ┃\n"
-               "\t┗━━━━━━━━━━━━━━━━━━━━━━━┛\n"
-        );
-    printf("Think of an object, and I will try to guess it!\n");
     TreeNode* current_node = tree->root;
-
     assert(current_node);
 
     while(true)
@@ -111,16 +117,17 @@ static AkinatorState RunAkinator(Tree* tree)
             printf("\t┏━━━━━━━━━━━━━━━━━━━━━━━┓\n"
                    "\t┃         Is it         ┃\n"
                    "\t┃"                        );
-            InsertText(current_node->value, 23);
+            InsertText(current_node->value, WINDOW_WIDTH);
             printf(                          "┃\n"
                    "\t┃     [yes]    [no]     ┃\n"
                    "\t┗━━━━━━━━━━━━━━━━━━━━━━━┛\n"
             );
 
-            int answer = getchar();
+            char answer[INPUT_BUFFER_SIZE + 1];
+            scanf("%" XSTR(INPUT_BUFFER_SIZE) "[^\n]", answer);
             ClearInput();
 
-            if(answer == 'y')
+            if(!strcmp(answer, INPUT_RIGHT))
             {
                 printf(CLEAR);
                 printf("\t┏━━━━━━━━━━━━━━━━━━━━━━━┓\n"
@@ -128,11 +135,12 @@ static AkinatorState RunAkinator(Tree* tree)
                        "\t┃  I guessed it right!  ┃\n"
                        "\t┗━━━━━━━━━━━━━━━━━━━━━━━┛\n"
                 );
-                usleep(1000000);
+                
+                AnyButtonExit();
 
                 return AKINATOR_CORRECT;
             }
-            else
+            else if(!strcmp(answer, INPUT_WRONG)) 
             {
                 printf(CLEAR);
                 printf("\t┏━━━━━━━━━━━━━━━━━━━━━━━┓\n"
@@ -146,14 +154,22 @@ static AkinatorState RunAkinator(Tree* tree)
                 ClearInput();
 
                 printf(CLEAR);
-                printf("Please provide a question that distinguishes %s from %s.\n", 
-                       new_object, current_node->value);
+                printf(CLEAR);
+                printf("    \t┏━━━━━━━━━━━━━━━━━━━━━━━┓\n"
+                           "\t┃     Please provide    ┃\n"
+                           "\t┃    a question that    ┃\n"
+                           "\t┃     distinguishes     ┃\n\t┃");
+                InsertText(new_object, WINDOW_WIDTH);
+                printf("┃ \n\t┃         from          ┃\n\t┃");
+                InsertText(current_node->value, WINDOW_WIDTH);
+                printf("┃ \n\t┗━━━━━━━━━━━━━━━━━━━━━━━┛\n");
 
                 char new_question[INPUT_BUFFER_SIZE + 1];
                 scanf("%" XSTR(INPUT_BUFFER_SIZE) "[^\n]", new_question);
                 ClearInput();
 
                 char* old_object = strdup(current_node->value);
+                assert(old_object);
                 
                 free(current_node->value);
                 current_node->value = strdup(new_question);
@@ -170,9 +186,22 @@ static AkinatorState RunAkinator(Tree* tree)
                        "\t┃       new today.      ┃\n"
                        "\t┗━━━━━━━━━━━━━━━━━━━━━━━┛\n"
                 );
-                usleep(1000000);
+                
+                AnyButtonExit();
 
                 break;
+            }
+            else
+            {
+                printf(CLEAR);
+                printf("\t┏━━━━━━━━━━━━━━━━━━━━━━━┓\n"
+                       "\t┃        Sorry?         ┃\n"
+                       "\t┗━━━━━━━━━━━━━━━━━━━━━━━┛\n"
+                );
+                
+                AnyButtonExit();
+
+                continue;
             }
         }
         else
@@ -180,16 +209,37 @@ static AkinatorState RunAkinator(Tree* tree)
             printf(CLEAR);
             printf("\t┏━━━━━━━━━━━━━━━━━━━━━━━┓\n"
                    "\t┃"                        );
-            InsertText(current_node->value, 23);
+            InsertText(current_node->value, WINDOW_WIDTH);
             printf(                          "┃\n"
                    "\t┃     [yes]    [no]     ┃\n"
                    "\t┗━━━━━━━━━━━━━━━━━━━━━━━┛\n"
             );            
 
-            int answer = getchar();
+
+            char answer[INPUT_BUFFER_SIZE + 1];
+            scanf("%" XSTR(INPUT_BUFFER_SIZE) "[^\n]", answer);
             ClearInput();
 
-            current_node = answer == 'y' ? current_node->right : current_node->left;
+            if(!strcmp(answer, INPUT_RIGHT))
+            {
+                current_node = current_node->right;
+            }
+            else if(!strcmp(answer, INPUT_WRONG))
+            {
+                current_node = current_node->left;
+            }
+            else
+            {
+                printf(CLEAR);
+                printf("\t┏━━━━━━━━━━━━━━━━━━━━━━━┓\n"
+                       "\t┃        Sorry?         ┃\n"
+                       "\t┗━━━━━━━━━━━━━━━━━━━━━━━┛\n"
+                );
+                
+                AnyButtonExit();
+
+                continue;
+            }
         }
     }
 
@@ -224,7 +274,7 @@ static AkinatorState DescriptionAkinator(Tree* tree)
         printf(CLEAR);
         printf("\t┏━━━━━━━━━━━━━━━━━━━━━━━┓\n"
                "\t┃");
-        InsertText(node->value, 23);
+        InsertText(node->value, WINDOW_WIDTH);
         printf("┃\n");
         printf("\t┠───────────────────────┨\n");
         while(parent_stack->size > 1)
@@ -235,23 +285,24 @@ static AkinatorState DescriptionAkinator(Tree* tree)
             if(stack_node->right == next_node)
             {
                 printf("\t┃-> ");
-                InsertText(stack_node->value, 20);
+                InsertText(stack_node->value, WINDOW_WIDTH - 3);
                 printf("┃\n");
             }
             else
             {
                 printf("\t┃-> Not ");
-                InsertText(stack_node->value, 16);
+                InsertText(stack_node->value, WINDOW_WIDTH - 7);
                 printf("┃\n");
             }
 
             StackPush(parent_stack, next_node);
         }
         printf("\t┗━━━━━━━━━━━━━━━━━━━━━━━┛\n");
-        usleep(5000000);
 
         StackDestroy(parent_stack);
         free(parent_stack);
+
+        AnyButtonExit();
     }
     else
     {
@@ -260,7 +311,8 @@ static AkinatorState DescriptionAkinator(Tree* tree)
                "\t┃       Not found       ┃\n"
                "\t┗━━━━━━━━━━━━━━━━━━━━━━━┛\n"
         );
-        usleep(1000000);
+
+        AnyButtonExit();
     }
 
     return AKINATOR_CORRECT;
@@ -291,7 +343,8 @@ static AkinatorState ComparatorAkinator(Tree* tree)
     if(node1 && node2)
     {  
         CompareNodes(node1, node2);
-        usleep(3500000);
+
+        AnyButtonExit();
     }
     else
     {
@@ -300,7 +353,8 @@ static AkinatorState ComparatorAkinator(Tree* tree)
                "\t┃       Not found       ┃\n"
                "\t┗━━━━━━━━━━━━━━━━━━━━━━━┛\n"
         );
-        usleep(1000000);
+        
+        AnyButtonExit();
     }
 
     return AKINATOR_CORRECT;
@@ -323,10 +377,10 @@ static void CompareNodes(TreeNode* node1, TreeNode* node2)
     printf(CLEAR);
     printf("\t┏━━━━━━━━━━━━━━━━━━━━━━━┓\n"
            "\t┃");
-    InsertText(node1->value, 23);
+    InsertText(node1->value, WINDOW_WIDTH);
     printf("┃\n");
     printf("\t┠───────────────────────┨\n\t┃");
-    InsertText(node2->value, 23);
+    InsertText(node2->value, WINDOW_WIDTH);
     printf(  "┃\n"
            "\t┠───────────────────────┨\n"
            "\t┃        COMMON         ┃\n");
@@ -336,7 +390,7 @@ static void CompareNodes(TreeNode* node1, TreeNode* node2)
     printf("\t┠───────────────────────┨\n"
            "\t┃       DIFFERENT       ┃\n");
 
-    PrintDifferent(parent_stack1, parent_stack1, node1, node2);
+    PrintDifferent(parent_stack1, parent_stack2, node1, node2);
 
     printf("\t┗━━━━━━━━━━━━━━━━━━━━━━━┛\n");
 
@@ -359,16 +413,18 @@ static void PrintCommon(Stack_t* parent_stack1, Stack_t* parent_stack2)
         TreeNode* stack_node2 = StackPop(parent_stack2);
         TreeNode* next_node2 = StackPop(parent_stack2);
         
-        if(stack_node1->right == next_node1 && stack_node2->right == next_node2)
+        if(stack_node1->right == next_node1 && stack_node2->right == next_node2 
+                                            && !strcmp(stack_node1->value, stack_node2->value))
         {
             printf("\t┃-> ");
-            InsertText(stack_node1->value, 20);
+            InsertText(stack_node1->value, WINDOW_WIDTH - 3);
             printf("┃\n");
         }
-        else if(stack_node1->left == next_node1 && stack_node2->left == next_node2)
+        else if(stack_node1->left == next_node1 && stack_node2->left == next_node2
+                                                && !strcmp(stack_node1->value, stack_node2->value))
         {
             printf("\t┃-> Not ");
-            InsertText(stack_node1->value, 16);
+            InsertText(stack_node1->value, WINDOW_WIDTH - 7);
             printf("┃\n");
         }
         else
@@ -396,7 +452,7 @@ static void PrintDifferent(Stack_t* parent_stack1, Stack_t* parent_stack2,
     assert(node2);
 
     printf("\t┃");
-    InsertText(node1->value, 23);
+    InsertText(node1->value, WINDOW_WIDTH);
     printf("┃\n");
     while(parent_stack1->size > 1)
     {
@@ -406,13 +462,13 @@ static void PrintDifferent(Stack_t* parent_stack1, Stack_t* parent_stack2,
         if(stack_node->right == next_node)
         {
             printf("\t┃-> ");
-            InsertText(stack_node->value, 20);
+            InsertText(stack_node->value, WINDOW_WIDTH - 3);
             printf("┃\n");
         }
         else
         {
             printf("\t┃-> Not ");
-            InsertText(stack_node->value, 16);
+            InsertText(stack_node->value, WINDOW_WIDTH - 7);
             printf("┃\n");
         }
 
@@ -420,7 +476,7 @@ static void PrintDifferent(Stack_t* parent_stack1, Stack_t* parent_stack2,
     }
 
     printf("\t┃");
-    InsertText(node2->value, 23);
+    InsertText(node2->value, WINDOW_WIDTH);
     printf("┃\n");
     while(parent_stack2->size > 1)
     {
@@ -430,13 +486,13 @@ static void PrintDifferent(Stack_t* parent_stack1, Stack_t* parent_stack2,
         if(stack_node->right == next_node)
         {
             printf("\t┃-> ");
-            InsertText(stack_node->value, 20);
+            InsertText(stack_node->value, WINDOW_WIDTH - 3);
             printf("┃\n");
         }
         else
         {
             printf("\t┃-> Not ");
-            InsertText(stack_node->value, 16);
+            InsertText(stack_node->value, WINDOW_WIDTH - 7);
             printf("┃\n");
         }
 
@@ -479,6 +535,8 @@ static void CreateParentStack(Stack_t* stack, TreeNode* node)
 
 static void InsertText(const char* text, size_t count)
 {
+    assert(text);
+
     size_t len = strlen(text);
 
     size_t spaces_before = (count - len)/2;
@@ -495,5 +553,11 @@ static void InsertText(const char* text, size_t count)
     {
         printf(" ");
     }
+}
 
+static void AnyButtonExit()
+{
+    printf("\nPress any button to continue\n");
+    getchar();
+    ClearInput();
 }

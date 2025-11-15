@@ -8,12 +8,9 @@ int main()
 {
     Tree* tree = TreeConstruct();
 
-    RunCycle(tree);
+    DO(RunCycle(tree));
 
-    //PrintNode(tree->root);
     TreeDotDump(tree, DOT_FILENAME);
-
-    DO(SaveTree(tree, TREE_FILENAME));
     TreeDestroy(tree);
 
     return 0;

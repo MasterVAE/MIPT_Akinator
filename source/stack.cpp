@@ -5,8 +5,6 @@
 
 void ErrorParser(int error);
 
-bool IsError(int error, int check);
-
 bool IsError(int error, StackError check)
 {
     return error & check;
@@ -59,7 +57,10 @@ int StackPush(Stack_t* stack, stack_type value)
     }
 
     stack->capacity *= STACK_MULTIPLIER;
-    stack->data = (stack_type*)realloc(stack->data, (stack->capacity + 2 * shield_size) * sizeof(stack_type));
+    stack_type* new_data = (stack_type*)realloc(stack->data, 
+                                        (stack->capacity + 2 * shield_size) * sizeof(stack_type));
+    if(!new_data) free(stack->data);
+    stack->data = new_data;
 
     err = StackVerify(stack); if(err != 0) return err;
 

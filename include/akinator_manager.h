@@ -27,4 +27,17 @@ TreeNode* FindNode(TreeNode* node, const char* value);
     }                                                   \
 }
 
+enum InputKeys
+{
+    INPUT_QUIT = 'q',
+    INPUT_LOAD = 'l',
+    INPUT_SAVE = 's',
+    INPUT_PLAY = 'p',
+    INPUT_DESCRIPTION = 'd',
+    INPUT_COMPARATOR = 'c'
+};
+
+static const char* const INPUT_RIGHT = "yes";
+static const char* const INPUT_WRONG = "no";
+
 #endif // AKINATOR_MANAGER_H_
