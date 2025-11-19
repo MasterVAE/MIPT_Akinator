@@ -5,7 +5,7 @@ INCLUDE_DIR = include
 FILES_DIR = files
 
 CC = g++
-CFLAGS = -D _DEBUG -ggdb3 -std=c++17 -Wall -Wextra -Weffc++ -Waggressive-loop-optimizations -I\
+CFLAGS = -D _DEBUG -ggdb3 -std=c++17 -Wall -Wextra -Weffc++ -Waggressive-loop-optimizations\
 		 -Wc++14-compat -Wmissing-declarations -Wcast-align -Wcast-qual -Wchar-subscripts \
 		 -Wconditionally-supported -Wconversion -Wctor-dtor-privacy -Wempty-body -Wfloat-equal\
 		 -Wformat-nonliteral -Wformat-security -Wformat-signedness -Wformat=2 -Winline -Wlogical-op\
@@ -24,8 +24,6 @@ SOURCES = main.cpp tree_manager.cpp tree_logger.cpp akinator_manager.cpp stack.c
 OBJECTS := $(addprefix $(OBJ_DIR)/, $(SOURCES:.cpp=.o))
 TARGET = $(TARGET_DIR)/akinator.out
 
-HEADERS = $(wildcard $(INCLUDE_DIR)/*.h)
-
 $(TARGET): $(OBJECTS) | $(TARGET_DIR) $(FILES_DIR)
 	@$(CC) $(CFLAGS) $^ -o $@
 	@echo "LINKED $@"
@@ -36,8 +34,6 @@ run: $(TARGET)
 	@./$(TARGET)
 
 bld: $(TARGET)
-
-$(OBJECTS): $(HEADERS)
 
 clean:
 	@rm -rf $(OBJ_DIR)

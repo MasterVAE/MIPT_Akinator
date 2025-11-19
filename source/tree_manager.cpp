@@ -52,7 +52,7 @@ void TreeNodeDestroy(TreeNode* node)
     free(node);
 }
 
-void TreeAdd(TreeNode* node, char* string, TreeAddDir direction)
+void TreeAdd(TreeNode* node, tree_elem_t string, TreeAddDir direction)
 {
     if(!node) return;
     if(!string) return;

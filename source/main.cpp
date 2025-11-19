@@ -9,7 +9,7 @@ int main()
     Tree* tree = TreeConstruct();
 
     DO(RunCycle(tree));
-
+// FIXME - dot and png to another papka
     TreeDotDump(tree, DOT_FILENAME, DotPrintString);
     TreeDestroy(tree);
 

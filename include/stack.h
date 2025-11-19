@@ -10,7 +10,7 @@ typedef TreeNode* stack_type;
 #define ERROR_STREAM stderr
 const int STACK_MULTIPLIER = 2;
 
-typedef enum StackError
+enum StackError
 {
     Verified = 0,
     StackNull = 1 << 1,
@@ -19,9 +19,9 @@ typedef enum StackError
     DataCorrupted = 1 << 4,
     CapacityInvalid = 1 << 5,
     StackUnderflow = 1 << 6
-} StackError_t;
+};
 
-bool IsError(int error, StackError_t check);
+bool IsError(int error, StackError check);
 
 typedef struct Stack
 {
